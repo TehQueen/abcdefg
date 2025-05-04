@@ -44,16 +44,29 @@ This project is a Python-based Telegram bot designed to run in Docker containers
 
 ```
 .
-├── handlers/            # Bot command and message handlers
-│   ├── __init__.py      # Dynamic module expansion
-│   └── base.py          # Basic event handler
-├── .env                 # Environment variables
-├── aiogram_run.py       # Entry point for the bot
-├── create_bot.py
+├── bot/                    # Bot folder
+│   ├── core/
+│   │   ├── __init__.py
+│   │   └── loader.py
+│   ├── databse/
+│   │   ├── __init__.py
+│   │   └── ...
+│   ├── handlers/
+│   │   ├── __init__.py     # Dynamic module expansion
+│   │   └── base.py
+│   ├── middlewares/
+│   │   ├── __init__.py
+│   │   └── ...
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   └── ...
+│   ├── __init__.py
+│   └── __main__.py         # Entry point for the bot
+├── .env                    # Environment variables
 ├── Dockerfile
 ├── docker-compose.yml
-├── README.md            # Project documentation
-└── requirements.txt     # Python dependencies
+├── README.md               # Project documentation
+└── requirements.txt        # Python dependencies
 ```
 
 ## Deployment

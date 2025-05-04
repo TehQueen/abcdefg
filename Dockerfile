@@ -49,4 +49,4 @@ ENV PYTHONUNBUFFERED=1
 USER appuser
 
 # Start the application
-CMD ["python3", "-B", "-m", "aiogram_run"]
+CMD ["python3", "-B", "-m", "bot"]

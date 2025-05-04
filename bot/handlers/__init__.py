@@ -31,20 +31,17 @@ handlers_dir = Path(__file__).parent
 # Initialize an empty list to collect Router instances
 routers = []
 
-# Iterate over all Python files in the directory, excluding private ones (starting with '_')
+# Dynamically import all Python modules in the directory, excluding private ones (starting with '_')
 for module_path in handlers_dir.glob("[!_]*.py"):
-    module_name = f"{handlers_dir.name}.{module_path.stem}"
     try:
-        # Dynamically import the module
-        module = import_module(f".{module_path.stem}", package=handlers_dir.name)
-        logger.info(f"Successfully imported handler: \'{module_name}\'")
+        # Import the module relative to the current package
+        module = import_module(f".{module_path.stem}", package=__package__)
+        logger.info(f"Successfully imported handler: \'{module.__name__}\'")
         
         # Collect all Router instances from the module
-        for obj in vars(module).values():
-            if isinstance(obj, Router):
-                routers.append(obj)
+        routers.extend(obj for obj in vars(module).values() if isinstance(obj, Router))
     except Exception as e:
-        logger.warning(f"Failed to import \'{module_name}\': {e}")
+        logger.warning(f"Failed to import \'{module_path.stem}\': {e}")
 
 # Expose the `routers` list as part of the module's public API
 __all__ = ["routers"]
