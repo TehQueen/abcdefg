@@ -1,0 +1,79 @@
+# Telegram Bot Project
+
+This project is a Python-based Telegram bot designed to run in Docker containers for easy deployment and scalability.
+
+## Features
+
+- Handles Telegram bot interactions.
+- Built with Python for flexibility and simplicity.
+- Dockerized for consistent and portable deployment.
+
+## Prerequisites
+
+- Python 3.12 or higher
+- Docker and Docker Compose installed
+- Telegram Bot API token
+
+## Getting Started
+
+1. **Clone the Repository**:
+    ```bash
+    git clone https://oauth2:<pk>@github.com/TehQueen/abcdefg.git
+    cd abcdefg
+    ```
+
+2. **Set Up Environment Variables**:
+    Create a `.env` file in the project root and add your Telegram Bot API token:
+    ```env
+    BOT_TOKEN=your_telegram_bot_token
+    POSTGRES_DB=name_of_your_database
+    POSTGRES_HOST=path_to_database
+    POSTGRES_USER=your_db_username
+    POSTGRES_PASSWORD=password_for_this_user
+    ```
+
+3. **Build and Run the Docker Containers**:
+    ```bash
+    docker-compose up --build -d
+    ```
+
+4. **Interact with the Bot**:
+    Open Telegram and start interacting with your bot.
+
+## Project Structure
+
+```
+.
+├── handlers/            # Bot command and message handlers
+│   ├── __init__.py      # Dynamic module expansion
+│   └── base.py          # Basic event handler
+├── .env                 # Environment variables
+├── aiogram_run.py       # Entry point for the bot
+├── create_bot.py
+├── Dockerfile
+├── docker-compose.yml
+├── README.md            # Project documentation
+└── requirements.txt     # Python dependencies
+```
+
+## Deployment
+
+To deploy the bot to a production environment, ensure your `.env` file is properly configured and use the following command:
+```bash
+docker-compose -f docker-compose.prod.yml up --build -d
+```
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+## Acknowledgments
+
+- [Telegram Bot API Documentation](https://core.telegram.org/bots/api)
+- [Aiogram Documentation](https://docs.aiogram.dev/en/v3.20.0.post0/api)
+- [Docker Documentation](https://docs.docker.com/)
+- Python community for their amazing libraries and support.
