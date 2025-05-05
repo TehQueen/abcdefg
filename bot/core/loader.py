@@ -8,6 +8,8 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
+from .. import middlewares
+
 
 scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
 
@@ -19,3 +21,8 @@ bot = Bot(token=os.environ.get('BOT_TOKEN'),
           default=DefaultBotProperties(parse_mode=ParseMode.HTML,
                                        link_preview_is_disabled=True))
 dp = Dispatcher(storage=MemoryStorage())
+
+[
+    dp.message.outer_middleware.register(middleware)
+        for middleware in middlewares.__middlewares__
+]
