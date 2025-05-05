@@ -21,7 +21,8 @@ async def main():
     Raises:
          Any exceptions raised during the setup or polling process.
     """
-    dp.include_routers(*routers)
+    if isinstance(routers, (list, tuple)) and routers:
+        dp.include_routers(*routers)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
