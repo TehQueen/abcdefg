@@ -1,30 +1,28 @@
 import asyncio
 
-from .core import bot, dp, scheduler
-from .handlers import routers
+from bot.core import bot, db_handler, dp, scheduler
+from bot.handlers import routers
 
 
 async def main():
     """
     Main entry point for the bot application.
-
-    This asynchronous function sets up the bot by including routers, 
-    removing any existing webhook (if applicable), and starting the 
-    polling process to handle updates.
-
-    Steps:
-    1. Includes all defined routers into the dispatcher.
-    2. Deletes the webhook configuration, ensuring no pending updates 
-        are retained.
-    3. Starts polling to listen for and process incoming updates.
-
+    This asynchronous function performs the following tasks:
+    1. Initializes the database handler.
+    2. Includes routers into the dispatcher if they are provided as a list or tuple.
+    3. Deletes the bot's webhook and optionally drops pending updates.
+    4. Starts polling for updates using the bot and dispatcher.
     Raises:
-         Any exceptions raised during the setup or polling process.
+        Exception: If any error occurs during the execution of the tasks.
     """
-    if isinstance(routers, (list, tuple)) and routers:
+    await db_handler()
+
+    if routers and isinstance(routers, (list, tuple)):
         dp.include_routers(*routers)
+
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())
