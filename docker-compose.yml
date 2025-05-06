@@ -60,9 +60,10 @@ services:
         condition: service_healthy
     environment:
       BOT_TOKEN: ${BOT_TOKEN}
-      PG_HOST: ${POSTGRES_HOST}
-      PG_USER: ${POSTGRES_USER}
-      PG_PASS: ${POSTGRES_PASSWORD}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_USER: ${POSTGRES_USER}
+      DB_PSWD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
     env_file:
       - .env
 
