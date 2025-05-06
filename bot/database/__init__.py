@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
-from . import handlers, models
+from bot.database import handlers, models
 
 
 class DatabaseHandler:
@@ -34,5 +34,6 @@ class DatabaseHandler:
         """
         async with self._engine.begin() as connection:
             await connection.run_sync(models.BaseModel.metadata.create_all)
+
 
 __all__ = ["DatabaseHandler"]
