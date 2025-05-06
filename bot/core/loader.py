@@ -29,9 +29,9 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from .. import middlewares
-from ..database import DatabaseHandler
-from .config import settings
+from bot import middlewares
+from bot.database import DatabaseHandler
+from bot.core.config import settings
 
 # Configure logging
 logging.basicConfig(
