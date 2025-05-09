@@ -1,16 +1,17 @@
 """
-This module initializes and exports the middlewares used in the application.
+This module initializes and exports middleware components for the bot.
+Modules:
+    throttle: Contains the `ThrottleMiddleware` class, which is responsible for
+              rate-limiting and throttling requests to ensure proper handling of
+              incoming traffic.
+    authoriz: Contains the `AuthorizationMiddleware` class, which manages user
+              authorization and access control for the bot.
 Exports:
-    __middlewares__ (list): A list of middleware instances to be used in the application.
-        - ThrottleMiddleware: Middleware that enforces a throttle time to limit the rate of requests.
-Attributes:
-    __all__ (list): Specifies the public symbols that this module exports.
+    ThrottleMiddleware: Middleware for handling request throttling.
 """
 from bot.middlewares.throttle import ThrottleMiddleware
 
 
-__all__ = ["__middlewares__"]
-
-__middlewares__ = [
-    ThrottleMiddleware(throttle_time=384),
+__all__ = [
+    "ThrottleMiddleware",
 ]

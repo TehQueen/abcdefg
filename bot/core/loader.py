@@ -1,25 +1,16 @@
 """
-This module initializes and configures the core components of the bot, including
-logging, database handler, scheduler, bot instance, dispatcher, and middlewares.
-Modules and Libraries:
-- logging: Configures logging for the application.
-- aiogram: Provides classes for bot and dispatcher initialization.
-- apscheduler: Used for scheduling tasks.
-- middlewares: Custom middlewares for the bot.
-- database: Handles database interactions.
-- config: Contains application settings.
-Components:
-- Logging: Configured to log messages at the INFO level.
-- DatabaseHandler: Initializes the database connection using the DSN from settings.
-- AsyncIOScheduler: Scheduler for managing asynchronous tasks, set to the 'Europe/Moscow' timezone.
-- Bot: Configures the bot instance with a token from the environment and default properties.
-- Dispatcher: Manages bot updates and uses in-memory storage for FSM.
-- Middlewares: Registers custom middlewares for processing incoming messages.
-Environment Variables:
-- BOT_TOKEN: The token for authenticating the bot with Telegram.
-Usage:
-This module is intended to be imported and used as the core loader for the bot's
-components. It ensures all necessary components are initialized and ready for use.
+This module initializes and configures the core components of the bot, including:
+- Logging: Configures the logging system to display messages with a specific format and level.
+- Database Handler: Initializes the database handler for interacting with the database using the DSN from the settings.
+- Scheduler: Sets up an asynchronous scheduler with a specified timezone for scheduling tasks.
+- Bot: Creates an instance of the bot with the provided token and default properties, such as parse mode and link preview settings.
+- Dispatcher: Initializes the dispatcher with in-memory storage for handling bot updates and state management.
+Modules and Libraries Used:
+- aiogram: For bot and dispatcher functionalities.
+- apscheduler: For scheduling tasks asynchronously.
+- logging: For logging configuration.
+- bot.database: Custom module for database handling.
+- bot.core.config: Custom module for accessing configuration settings.
 """
 import logging
 
@@ -29,7 +20,6 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from bot import middlewares
 from bot.database import DatabaseHandler
 from bot.core.config import settings
 
@@ -57,7 +47,3 @@ bot = Bot(
 
 # Initialize dispatcher
 dp = Dispatcher(storage=MemoryStorage())
-
-# Register middlewares
-for middleware in middlewares.__middlewares__:
-    dp.message.outer_middleware.register(middleware)
