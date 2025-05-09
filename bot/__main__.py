@@ -15,7 +15,7 @@ async def main():
     Raises:
         Exception: If any error occurs during the execution of the tasks.
     """
-    await db_handler()
+    assert await db_handler.init()
 
     if routers and isinstance(routers, (list, tuple)):
         dp.include_routers(*routers)

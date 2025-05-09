@@ -1,6 +1,7 @@
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+from typing import Awaitable, Callable, Concatenate
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 
-from bot.database import handlers, models
+from bot.database.models import BaseModel
 
 
 class DatabaseHandler:
@@ -9,13 +10,8 @@ class DatabaseHandler:
     and creating all tables.
 
     Attributes:
-        __models__ (list): List of all models defined in the `models` module.
-        __handlers__ (list): List of all handlers defined in the `handlers` module.
         _engine (AsyncEngine): The asynchronous database engine.
     """
-    __models__: list[str] = models.__all__
-    __handlers__: list[str] = handlers.__all__
-
     def __init__(self, dsn: str) -> None:
         """
         Initialize the DatabaseHandler with a given Data Source Name (DSN).
@@ -25,15 +21,34 @@ class DatabaseHandler:
         """
         self._engine: AsyncEngine = create_async_engine(dsn)
 
-    async def __call__(self) -> None:
+    def __call__[T, R, **P](self, handler: Callable[Concatenate[T, P], Awaitable[R]]) -> Callable[P, Awaitable[R]]:
+        """
+        A decorator to wrap a handler function with a database session.
+
+        Args:
+            handler (Callable): The handler function to be wrapped.
+
+        Returns:
+            Callable: A wrapped function that provides a database session.
+        """
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            async with AsyncSession(self._engine) as session:
+                return await handler(session, *args, **kwargs)
+        return wrapper
+
+    async def init(self) -> bool:
         """
         Set up the database engine and create all tables.
 
         This method initializes the database by creating all defined tables
         using the metadata from the models.
         """
-        async with self._engine.begin() as connection:
-            await connection.run_sync(models.BaseModel.metadata.create_all)
+        try:
+            async with self._engine.begin() as connection:
+                await connection.run_sync(BaseModel.metadata.create_all)
+            return True
+        except Exception:
+            return False
 
 
 __all__ = ["DatabaseHandler"]
