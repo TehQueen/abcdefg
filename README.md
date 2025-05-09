@@ -53,7 +53,7 @@ This project is a Python-based Telegram bot designed to run in Docker containers
 │   │   └── ...
 │   ├── handlers/
 │   │   ├── __init__.py     # Dynamic module expansion
-│   │   └── ...
+│   │   └── base.py
 │   ├── middlewares/
 │   │   ├── __init__.py
 │   │   └── ...
@@ -65,8 +65,7 @@ This project is a Python-based Telegram bot designed to run in Docker containers
 ├── .env                    # Environment variables
 ├── Dockerfile
 ├── docker-compose.yml
-├── LICENSE                 # Project license
-├── README                  # Project documentation
+├── README.md               # Project documentation
 └── requirements.txt        # Python dependencies
 ```
 
