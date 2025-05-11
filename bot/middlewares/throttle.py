@@ -46,3 +46,6 @@ class ThrottleMiddleware(BaseMiddleware):
         else:
             self.logger.info(f"User {uid} is throttled. Waiting for {self.throttle_time} ms.")
             self.user_last_time[uid] = current_time
+
+    def __repr__(self):
+        return f"ThrottleMiddleware(throttle_time={self.throttle_time})"
