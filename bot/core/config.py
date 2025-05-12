@@ -1,39 +1,45 @@
 """
-This module defines the configuration settings for the bot application using Pydantic's BaseSettings.
+This module defines the `Settings` class for managing application configuration
+using Pydantic's `BaseSettings`. It provides a structured way to handle environment
+variables and default values for various settings.
 Classes:
-    Settings:
-        A Pydantic BaseSettings subclass that holds configuration values for the bot and database.
-        It includes a property to generate the database connection string (DSN).
+    - Settings: A Pydantic-based configuration class that includes settings for
+      bot configuration, localization, scheduler, and database connection.
 Attributes:
-    settings (Settings):
-        An instance of the Settings class, which loads the configuration values.
-Settings Attributes:
-    BOT_TOKEN (str):
-        The token used to authenticate the bot with the messaging platform.
-    DB_USER (str):
-        The username for connecting to the database. Defaults to "postgres".
-    DB_PSWD (str):
-        The password for connecting to the database. Defaults to "postgres".
-    DB_HOST (str):
-        The hostname or IP address of the database server. Defaults to "localhost".
-    DB_PORT (str):
-        The port number on which the database server is listening. Defaults to "5432".
-    DB_NAME (str):
-        The name of the database to connect to. Defaults to "postgres".
-    DB_DRIVER (str):
-        The database driver used for the connection. Defaults to "postgresql+asyncpg".
-Methods:
-    DSN (property):
-        Constructs and returns the database connection string (DSN) based on the database configuration attributes.
+    - BOT_TOKEN (str): The bot token for authentication.
+    - LOCALE_DIR (str): Path to the directory containing localization files.
+    - LOCALE_DOMAIN (str): Domain name for localization messages.
+    - LOCALE_FALLBACK (str): Fallback language for localization.
+    - SCHEDULER_TIMEZONE (str): Timezone for the scheduler.
+    - DB_USER (str): Database username.
+    - DB_PSWD (str): Database password.
+    - DB_HOST (str): Database host address.
+    - DB_PORT (str): Database port number.
+    - DB_NAME (str): Database name.
+    - DB_DRIVER (str): Database driver for connection.
+Properties:
+    - DSN (str): Constructs and returns the database connection string (DSN)
+      based on the database configuration attributes.
 """
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    # Configuration model settings
     model_config = SettingsConfigDict(validate_default=False)
 
     # Bot configuration
     BOT_TOKEN: str
+
+    # Localization configuration
+    LOCALE_DIR: str = str(Path(__file__).parent.parent / "locales")
+    LOCALE_DOMAIN: str = "messages"
+    LOCALE_FALLBACK: str = "en"
+
+    # Scheduler configuration
+    SCHEDULER_TIMEZONE: str = "Europe/Moscow"
 
     # Database configuration
     DB_USER: str = "postgres"
@@ -48,5 +54,6 @@ class Settings(BaseSettings):
         return (
             f"{self.DB_DRIVER}://{self.DB_USER}:{self.DB_PSWD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
+
 
 settings = Settings()
