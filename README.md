@@ -1,11 +1,11 @@
 # Telegram Bot Project
 
-This project is a Python-based Telegram bot designed to run in Docker containers for easy deployment and scalability.
+This project is a Python-based Telegram bot designed for seamless deployment and scalability using Docker.
 
 ## Features
 
-- Handles Telegram bot interactions.
-- Built with Python for flexibility and simplicity.
+- Efficiently handles Telegram bot interactions.
+- Built with Python for flexibility and ease of development.
 - Dockerized for consistent and portable deployment.
 
 ## Prerequisites
@@ -23,13 +23,13 @@ This project is a Python-based Telegram bot designed to run in Docker containers
     ```
 
 2. **Set Up Environment Variables**:
-    Create a `.env` file in the project root and add your Telegram Bot API token:
+    Create a `.env` file in the project root and configure the following:
     ```env
     BOT_TOKEN=your_telegram_bot_token
-    POSTGRES_DB=name_of_your_database
-    POSTGRES_HOST=path_to_database
-    POSTGRES_USER=your_db_username
-    POSTGRES_PASSWORD=password_for_this_user
+    POSTGRES_DB=your_database_name
+    POSTGRES_HOST=your_database_host
+    POSTGRES_USER=your_database_user
+    POSTGRES_PASSWORD=your_database_password
     ```
 
 3. **Build and Run the Docker Containers**:
@@ -44,49 +44,42 @@ This project is a Python-based Telegram bot designed to run in Docker containers
 
 ```
 .
-├── bot/                    # Bot folder
-│   ├── core/
-│   │   ├── __init__.py
-│   │   └── loader.py
-│   ├── databse/
-│   │   ├── __init__.py
-│   │   └── ...
-│   ├── handlers/
-│   │   ├── __init__.py     # Dynamic module expansion
-│   │   └── base.py
-│   ├── middlewares/
-│   │   ├── __init__.py
-│   │   └── ...
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   └── ...
-│   ├── __init__.py
-│   └── __main__.py         # Entry point for the bot
+├── bot/                    # Bot source code
+│   ├── core/               # Core utilities
+│   ├── database/           # Database handlers
+│   ├── handlers/           # Telegram event handlers
+│   │   ├── channel/        # Channel-specific handlers
+│   │   ├── group/          # Group-specific handlers
+│   │   └── personal/       # Personal chat handlers
+│   ├── middlewares/        # Middleware logic
+│   ├── utils/              # Helper utilities
+│   └── __main__.py         # Bot entry point
 ├── .env                    # Environment variables
-├── Dockerfile
-├── docker-compose.yml
+├── Dockerfile              # Docker configuration
+├── docker-compose.yml      # Docker Compose configuration
+├── LICENSE.md              # License information
 ├── README.md               # Project documentation
 └── requirements.txt        # Python dependencies
 ```
 
 ## Deployment
 
-To deploy the bot to a production environment, ensure your `.env` file is properly configured and use the following command:
+For production deployment, ensure your `.env` file is properly configured and run:
 ```bash
 docker-compose -f docker-compose.prod.yml up --build -d
 ```
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request.
+Contributions are welcome! Fork the repository, make your changes, and submit a pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the GPLv3 License. See the `LICENSE.md` file for details.
 
 ## Acknowledgments
 
 - [Telegram Bot API Documentation](https://core.telegram.org/bots/api)
-- [Aiogram Documentation](https://docs.aiogram.dev/en/v3.20.0.post0/api)
+- [Aiogram Documentation](https://docs.aiogram.dev/en/latest/)
 - [Docker Documentation](https://docs.docker.com/)
-- Python community for their amazing libraries and support.
+- Python community for their invaluable libraries and support.
