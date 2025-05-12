@@ -1,6 +1,6 @@
 import asyncio
 
-from bot.core import bot, db_handler, dp, scheduler
+from bot.core import bot, db_handler, dp, locale, scheduler
 from bot.handlers import routers
 from bot.middlewares import IncludeHelper
 
@@ -30,6 +30,7 @@ async def main():
         lambda _: [
             # Add any middlewares here
             _.ThrottleMiddleware(throttle_time=384),
+            _.SimpleI18nMiddleware(i18n=locale),
         ],
     )
 
