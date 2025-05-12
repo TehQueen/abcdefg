@@ -48,5 +48,7 @@ ENV PYTHONUNBUFFERED=1
 # Switch to non-root user
 USER appuser
 
+RUN pybabel compile -d bot/locales -D messages
+
 # Start the application
 CMD ["python3", "-B", "-m", "bot"]
