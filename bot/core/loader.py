@@ -48,8 +48,6 @@ scheduler = AsyncIOScheduler(
     timezone=settings.SCHEDULER_TIMEZONE
 )
 
-print(settings.LOCALE_DIR)
-
 # Initialize i18n (internationalization) for localization
 locale = I18n(
     path=settings.LOCALE_DIR,
