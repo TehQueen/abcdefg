@@ -19,9 +19,8 @@ class User(BaseModel):
     """
     __tablename__ = 'users'
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    username: Mapped[str] = mapped_column(String)
-    first_name: Mapped[str] = mapped_column(String)
-    last_name: Mapped[str] = mapped_column(String)
-    language_code: Mapped[str] = mapped_column(String)
-    sub_end_date: Mapped[datetime] = mapped_column(DateTime)
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=False)
+    username: Mapped[str] = mapped_column(String, unique=True, nullable=True, index=True)
+    full_name: Mapped[str] = mapped_column(String, nullable=False)
+    language_code: Mapped[str] = mapped_column(String, nullable=False)
+    sub_end_date: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
