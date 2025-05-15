@@ -28,8 +28,17 @@ class LoggingSystem:
         # Basic Configuration Setup
         logging.basicConfig(
             level=level,
+            force=True,
             format=format
         )
+
+        # Optimizing logging performance
+        logging._srcfile = None
+        logging.logProcesses = False
+        logging.logThreads = False
+        logging.logMultiprocessing = False
+        logging.raiseExceptions = False
+
 
         # Disabling unnecessary loggers
         for logger_name in ignored_loggers:
