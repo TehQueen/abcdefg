@@ -1,6 +1,6 @@
 import logging
 
-from typing import Union
+from typing import List, Union
 
 
 class LoggingSystem:
@@ -10,23 +10,32 @@ class LoggingSystem:
     def __init__(
         self,
         level: Union[str, int] = "INFO",
-        format: str = BASE_FORMAT
+        format: str = BASE_FORMAT,
+        ignored_loggers: List[str] = ["sqlalchemy", "sqlite3"]
     ):
         self._setup_logging(
             level,
-            format
+            format,
+            ignored_loggers
         )
 
     def _setup_logging(
         self,
         level: Union[str, int],
-        format: str
+        format: str,
+        ignored_loggers: List[str]
     ):
         # Basic Configuration Setup
         logging.basicConfig(
             level=level,
             format=format
         )
+
+        # Disabling unnecessary loggers
+        for logger_name in ignored_loggers:
+            logger = logging.getLogger(logger_name)
+            logger.propagate = False
+            logger.disabled = True
 
         # Checking the configuration
         logging.info("Logging system initialized with %s level", level)
