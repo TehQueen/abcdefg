@@ -2,6 +2,7 @@ import sys
 import time
 import logging
 
+from logging.handlers import RotatingFileHandler
 from typing import List, Union, Optional
 
 
@@ -43,6 +44,8 @@ class LoggingSystem:
         console_format: str = CONSOLE_FORMAT,
         file_format: str = FILE_FORMAT,
         filename: Optional[str] = None,
+        max_bytes: int = 48 * 1024 * 1024,
+        backup_count: int = 5,
         encoding: str = "utf-8",
         ignored_loggers: List[str] = ["sqlalchemy", "sqlite3"]
     ):
@@ -51,6 +54,8 @@ class LoggingSystem:
             console_format,
             file_format,
             filename,
+            max_bytes,
+            backup_count,
             encoding,
             ignored_loggers
         )
@@ -61,6 +66,8 @@ class LoggingSystem:
         console_format: str,
         file_format: str,
         filename: Optional[str],
+        max_bytes: int,
+        backup_count: int,
         encoding: str,
         ignored_loggers: List[str]
     ):
@@ -74,8 +81,10 @@ class LoggingSystem:
 
         # File Handler
         if filename:
-            file_handler = logging.FileHandler(
+            file_handler = RotatingFileHandler(
                 filename=filename,
+                maxBytes=max_bytes,
+                backupCount=backup_count,
                 encoding=encoding,
                 delay=True,
             )
