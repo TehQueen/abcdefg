@@ -1,7 +1,7 @@
 import sys
 import logging
 
-from typing import List, Union
+from typing import List, Union, Optional
 
 
 class ConsoleFormatter(logging.Formatter):
@@ -27,17 +27,24 @@ class ConsoleFormatter(logging.Formatter):
 
 class LoggingSystem:
     CONSOLE_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    FILE_FORMAT = "%(message)s"
 
     """Comprehensive logging system with advanced features"""
     def __init__(
         self,
         level: Union[str, int] = "INFO",
         console_format: str = CONSOLE_FORMAT,
+        file_format: str = FILE_FORMAT,
+        filename: Optional[str] = None,
+        encoding: str = "utf-8",
         ignored_loggers: List[str] = ["sqlalchemy", "sqlite3"]
     ):
         self._setup_logging(
             level,
             console_format,
+            file_format,
+            filename,
+            encoding,
             ignored_loggers
         )
 
@@ -45,6 +52,9 @@ class LoggingSystem:
         self,
         level: Union[str, int],
         console_format: str,
+        file_format: str,
+        filename: Optional[str],
+        encoding: str,
         ignored_loggers: List[str]
     ):
         # Setting up handlers
@@ -54,6 +64,16 @@ class LoggingSystem:
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(ConsoleFormatter(console_format))
         handlers.append(console_handler)
+
+        # File Handler
+        if filename:
+            file_handler = logging.FileHandler(
+                filename=filename,
+                encoding=encoding,
+                delay=True,
+            )
+            file_handler.setFormatter(logging.Formatter(file_format))
+            handlers.append(file_handler)
 
         # Basic Configuration Setup
         logging.basicConfig(
