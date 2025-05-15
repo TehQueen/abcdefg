@@ -6,7 +6,7 @@ services:
       - pg_db:/var/lib/postgresql/data:rw
       - /tmp/postgres-tmp:/tmp:tmpfs
     networks:
-      - rloc_net
+      - backend-network
     ports:
       - "5432:5432"
     deploy:
@@ -40,12 +40,15 @@ services:
       - .env
 
   telegram-bot:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: tg-bot
     volumes:
-      - static:/var/abcdefg/static:ro
+      - app-logs:${LOG_DDIR:-/var/log/tb}
+      - static-volume:/app/static:ro
     networks:
-      - rloc_net
+      - backend-network
     deploy:
       resources:
         limits:
@@ -64,12 +67,22 @@ services:
       DB_USER: ${POSTGRES_USER}
       DB_PSWD: ${POSTGRES_PASSWORD}
       DB_NAME: ${POSTGRES_DB}
+      LOG_DIR: ${LOG_DDIR:-/var/log/tb}
     env_file:
       - .env
 
 volumes:
+  app-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${LOG_SDIR:-./logs}
+  static-volume:
+    driver: local
   pg_db:
-  static:
 
 networks:
-  rloc_net:
+  backend-network:
+    driver: bridge
+    attachable: true
