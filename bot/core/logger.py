@@ -1,4 +1,5 @@
 import sys
+import time
 import logging
 
 from typing import List, Union, Optional
@@ -23,6 +24,12 @@ class ConsoleFormatter(logging.Formatter):
             datefmt='%Y-%m-%d %H:%M:%S'
         )
         return formatter.format(record)
+
+
+class FileFormatter(logging.Formatter):
+    """Minimalistic file formatter"""
+    def format(self, record):
+        return f"{time.time():.3f}|{record.levelname[:1]}|{record.name[:8]}|{record.msg}"
 
 
 class LoggingSystem:
@@ -72,7 +79,7 @@ class LoggingSystem:
                 encoding=encoding,
                 delay=True,
             )
-            file_handler.setFormatter(logging.Formatter(file_format))
+            file_handler.setFormatter(FileFormatter(file_format))
             handlers.append(file_handler)
 
         # Basic Configuration Setup
