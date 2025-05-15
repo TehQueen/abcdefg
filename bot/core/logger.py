@@ -1,35 +1,45 @@
+import sys
 import logging
 
 from typing import List, Union
 
 
 class LoggingSystem:
-    BASE_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    CONSOLE_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
     """Comprehensive logging system with advanced features"""
     def __init__(
         self,
         level: Union[str, int] = "INFO",
-        format: str = BASE_FORMAT,
+        console_format: str = CONSOLE_FORMAT,
         ignored_loggers: List[str] = ["sqlalchemy", "sqlite3"]
     ):
         self._setup_logging(
             level,
-            format,
+            console_format,
             ignored_loggers
         )
 
     def _setup_logging(
         self,
         level: Union[str, int],
-        format: str,
+        console_format: str,
         ignored_loggers: List[str]
     ):
+        # Setting up handlers
+        handlers = []
+
+        # Console Handler
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(logging.Formatter(console_format))
+        handlers.append(console_handler)
+
         # Basic Configuration Setup
         logging.basicConfig(
             level=level,
+            handlers=handlers,
+            format=console_format,
             force=True,
-            format=format
         )
 
         # Optimizing logging performance
