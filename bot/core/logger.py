@@ -4,6 +4,27 @@ import logging
 from typing import List, Union
 
 
+class ConsoleFormatter(logging.Formatter):
+    """Formatter with colors for console"""
+    COLORS = {
+        logging.DEBUG: '\033[94m',
+        logging.INFO: '\033[92m',
+        logging.WARNING: '\033[93m',
+        logging.ERROR: '\033[91m',
+        logging.CRITICAL: '\033[91m'
+    }
+    RESET = '\033[0m'
+    FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+    def format(self, record):
+        color = self.COLORS.get(record.levelno, '')
+        formatter = logging.Formatter(
+            f'{color}{self.FORMAT}{self.RESET}',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        return formatter.format(record)
+
+
 class LoggingSystem:
     CONSOLE_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
@@ -31,7 +52,7 @@ class LoggingSystem:
 
         # Console Handler
         console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(logging.Formatter(console_format))
+        console_handler.setFormatter(ConsoleFormatter(console_format))
         handlers.append(console_handler)
 
         # Basic Configuration Setup
