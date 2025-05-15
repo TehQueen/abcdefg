@@ -7,6 +7,8 @@ Classes:
       bot configuration, localization, scheduler, and database connection.
 Attributes:
     - BOT_TOKEN (str): The bot token for authentication.
+    - LOG_DIR (str): Path to the directory containing log files.
+    - LOG_FILE (str): Current log file name.
     - LOCALE_DIR (str): Path to the directory containing localization files.
     - LOCALE_DOMAIN (str): Domain name for localization messages.
     - LOCALE_FALLBACK (str): Fallback language for localization.
@@ -32,6 +34,10 @@ class Settings(BaseSettings):
 
     # Bot configuration
     BOT_TOKEN: str
+
+    # Logging configuration
+    LOG_DIR: str = "/var/log/tb"
+    LOG_FILE: str = str(Path(LOG_DIR) / "app.log")
 
     # Localization configuration
     LOCALE_DIR: str = str(Path(__file__).parent.parent / "locales")
