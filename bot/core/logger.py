@@ -1,9 +1,12 @@
 import sys
 import time
 import logging
+import threading
 
-from logging.handlers import RotatingFileHandler
+from io import BytesIO
+
 from typing import List, Union, Optional
+from logging.handlers import RotatingFileHandler
 
 
 class ConsoleFormatter(logging.Formatter):
@@ -33,6 +36,78 @@ class FileFormatter(logging.Formatter):
         return f"{time.time():.3f}|{record.levelname[:1]}|{record.name[:8]}|{record.msg}"
 
 
+class BufferedRotatingFileHandler(RotatingFileHandler):
+    """Buffered handler with double reset condition"""
+    def __init__(
+        self,
+        filename: str,
+        mode: str = 'a',
+        maxBytes: int = 0,
+        backupCount: int = 0,
+        bufferSize: Optional[int] = None,
+        flushInterval: Optional[float] = None,
+        encoding: Optional[str] = None,
+        delay: bool = False
+    ):
+        super().__init__(
+            filename,
+            mode,
+            maxBytes,
+            backupCount,
+            encoding,
+            delay
+        )
+        self.buffer = BytesIO()
+        self.bufferSize = bufferSize
+        self.flushInterval = flushInterval
+        self.lastFlush = time.monotonic()
+        self._lock = threading.Lock()
+
+    def emit(self, record):
+        with self._lock:
+            try:
+                msg = self.format(record)
+                
+                if self.buffer and self.bufferSize:
+                    self.buffer.write(msg.encode(self.encoding))
+                    self.buffer.write(b'\n')
+
+                    current_time = time.monotonic()
+                    buffer_full = self.buffer.tell() >= self.bufferSize
+                    time_expired = (current_time - self.lastFlush) >= self.flushInterval
+
+                    if buffer_full or time_expired:
+                        self._flush_buffer()
+
+                elif self.stream:
+                    self.stream.write(msg)
+                    self.stream.write('\n')
+                    self.stream.flush()
+
+                if self.shouldRollover(record):
+                    self.doRollover()
+            except Exception as e:
+                self.handleError(record)
+
+    def close(self):
+        with self._lock:
+            try:
+                self._flush_buffer()
+
+                if self.stream:
+                    self.stream.close()
+            finally:
+                super().close()
+
+    def _flush_buffer(self):
+        if self.buffer.tell() > 0:
+            self.stream.write(self.buffer.getvalue() \
+                              .decode(self.encoding))
+            self.stream.flush()
+            self.buffer = BytesIO()
+            self.lastFlush = time.monotonic()
+
+
 class LoggingSystem:
     CONSOLE_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     FILE_FORMAT = "%(message)s"
@@ -46,6 +121,8 @@ class LoggingSystem:
         filename: Optional[str] = None,
         max_bytes: int = 48 * 1024 * 1024,
         backup_count: int = 5,
+        buffer_size: Optional[int] = None,
+        flush_interval: Optional[float] = None,
         encoding: str = "utf-8",
         ignored_loggers: List[str] = ["sqlalchemy", "sqlite3"]
     ):
@@ -56,6 +133,8 @@ class LoggingSystem:
             filename,
             max_bytes,
             backup_count,
+            buffer_size,
+            flush_interval,
             encoding,
             ignored_loggers
         )
@@ -68,6 +147,8 @@ class LoggingSystem:
         filename: Optional[str],
         max_bytes: int,
         backup_count: int,
+        buffer_size: Optional[int],
+        flush_interval: Optional[float],
         encoding: str,
         ignored_loggers: List[str]
     ):
@@ -81,10 +162,12 @@ class LoggingSystem:
 
         # File Handler
         if filename:
-            file_handler = RotatingFileHandler(
+            file_handler = BufferedRotatingFileHandler(
                 filename=filename,
                 maxBytes=max_bytes,
                 backupCount=backup_count,
+                bufferSize=buffer_size,
+                flushInterval=flush_interval,
                 encoding=encoding,
                 delay=True,
             )
