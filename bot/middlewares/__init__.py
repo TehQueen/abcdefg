@@ -2,8 +2,8 @@
 This module initializes and exports middleware components for the bot.
 
 Modules:
-    throttle: Contains the `ThrottleMiddleware` class, which is responsible for
-              rate-limiting and throttling requests to ensure proper handling of
+    throttle: Contains the `AdvancedThrottleMiddleware` class, which is responsible
+              for rate-limiting and throttling requests to ensure proper handling of
               incoming traffic.
     translation: Contains the `SimpleI18nMiddleware` class, which provides
               internationalization and localization support for the bot.
@@ -19,14 +19,14 @@ from typing import Protocol
 from aiogram import BaseMiddleware, Router
 from aiogram.utils.i18n import SimpleI18nMiddleware
 
-from bot.middlewares.throttle import ThrottleMiddleware
+from bot.middlewares.throttle import AdvancedThrottleMiddleware
 
 
 class IncludeMeta(Protocol):
     """
     Meta class to define the structure of inner middlewares for the current module.
     """
-    class ThrottleMiddleware(ThrottleMiddleware):
+    class AdvancedThrottleMiddleware(AdvancedThrottleMiddleware):
         ...
     class SimpleI18nMiddleware(SimpleI18nMiddleware):
         ...
@@ -102,7 +102,7 @@ class IncludeHelper:
 
 
 __all__ = [
-    "ThrottleMiddleware",
+    "AdvancedThrottleMiddleware",
     "SimpleI18nMiddleware",
     "IncludeHelper",
 ]
