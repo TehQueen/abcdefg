@@ -27,10 +27,10 @@ async def main():
     assert await db_handler.init()
     
     assert dp @ IncludeHelper(
-        lambda _: [
+        lambda module: [
             # Add any middlewares here
-            _.ThrottleMiddleware(throttle_time=384),
-            _.SimpleI18nMiddleware(i18n=locale),
+            module.HighPerformanceThrottleMiddleware(),
+            module.SimpleI18nMiddleware(i18n=locale),
         ],
     )
 

@@ -2,8 +2,8 @@
 This module initializes and exports middleware components for the bot.
 
 Modules:
-    throttle: Contains the `ThrottleMiddleware` class, which is responsible for
-              rate-limiting and throttling requests to ensure proper handling of
+    throttle: Contains the `AdvancedThrottleMiddleware` class, which is responsible
+              for rate-limiting and throttling requests to ensure proper handling of
               incoming traffic.
     translation: Contains the `SimpleI18nMiddleware` class, which provides
               internationalization and localization support for the bot.
@@ -14,20 +14,22 @@ Exports:
 import sys
 import logging
 
-from typing import List, Protocol, Type
+from typing import Protocol
 
 from aiogram import BaseMiddleware, Router
 from aiogram.utils.i18n import SimpleI18nMiddleware
 
-from bot.middlewares.throttle import ThrottleMiddleware
+from bot.middlewares.throttle import HighPerformanceThrottleMiddleware
 
 
 class IncludeMeta(Protocol):
     """
     Meta class to define the structure of inner middlewares for the current module.
     """
-    ThrottleMiddleware: Type[ThrottleMiddleware]
-    SimpleI18nMiddleware: Type[SimpleI18nMiddleware]
+    class HighPerformanceThrottleMiddleware(HighPerformanceThrottleMiddleware):
+        ...
+    class SimpleI18nMiddleware(SimpleI18nMiddleware):
+        ...
 
 
 class MiddlewareFactory(Protocol):
@@ -42,7 +44,7 @@ class MiddlewareFactory(Protocol):
             A callable method that takes a module of type `IncludeMeta` and returns
             a list of middleware instances.
     """
-    def __call__(self, module: Type[IncludeMeta]) -> List[BaseMiddleware]:
+    def __call__(self, module: IncludeMeta) -> list[BaseMiddleware]:
         ...
 
 class IncludeHelper:
@@ -86,7 +88,9 @@ class IncludeHelper:
             - Logs a warning if an error occurs during middleware registration and returns False.
         """
         try:
-            for middleware in self.factory(sys.modules[__package__]):
+            module: IncludeMeta = sys.modules[__name__]
+
+            for middleware in self.factory(module):
                 target_middleware = self.outer_middleware and \
                     router.message.outer_middleware or router.message.middleware
                 target_middleware.register(middleware)
@@ -98,7 +102,7 @@ class IncludeHelper:
 
 
 __all__ = [
-    "ThrottleMiddleware",
+    "HighPerformanceThrottleMiddleware",
     "SimpleI18nMiddleware",
     "IncludeHelper",
 ]
