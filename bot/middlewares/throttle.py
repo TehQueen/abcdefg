@@ -1,6 +1,7 @@
+import time
 import logging
 
-from time import time
+from cachetools import TTLCache
 from typing import Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
@@ -26,26 +27,39 @@ class ThrottleMiddleware(BaseMiddleware):
     """
     def __init__(self, throttle_time: int = 850) -> None:
         super().__init__()
-
         self.logger = logging.getLogger(__name__)
-        self.user_last_time = dict[int, int]()
         self.throttle_time = throttle_time
 
-    async def __call__(self, handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-                       event: Message, data: Dict[str, Any]) -> Any:
-        uid = event.from_user.id
-        current_time = int(time() * 1000)
+        # Configuring caching and auto-cleaning settings
+        self.user_last_time = TTLCache(maxsize=10_000, ttl=86400)
 
-        last_time = self.user_last_time.get(uid, 0)
-        elapsed_time = current_time - last_time
-        ratio = self.throttle_time / elapsed_time
-
-        if (elapsed_time > self.throttle_time) and (ratio <= 0.4):
-            self.user_last_time[uid] = current_time
+    async def __call__(
+        self,
+        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
+        event: Message,
+        data: Dict[str, Any],
+    ) -> Any:
+        # pass requests without a user
+        if not event.from_user:
             return await handler(event, data)
-        else:
-            self.logger.info(f"User {uid} is throttled. Waiting for {self.throttle_time} ms.")
-            self.user_last_time[uid] = current_time
 
-    def __repr__(self):
-        return f"ThrottleMiddleware(throttle_time={self.throttle_time})"
+        user_id = event.from_user.id
+        current_time = int(time.monotonic() * 1000)
+        last_time = self.user_last_time.get(user_id, 0)
+        elapsed_time = current_time - last_time
+
+        # Check if the request is too frequent
+        if elapsed_time < self.throttle_time:
+            self.logger.debug(
+                f"Throttled user {user_id}. "
+                f"Elapsed: {elapsed_time}ms < {self.throttle_time}ms"
+            )
+            # Interrupt processing.
+            return
+
+        # Update the time and skip the request
+        self.user_last_time[user_id] = current_time
+        return await handler(event, data)
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(throttle_time={self.throttle_time})"
