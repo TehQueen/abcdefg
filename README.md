@@ -1,6 +1,12 @@
 # Telegram Bot Project
 
-This project is a Python-based Telegram bot designed for seamless deployment and scalability using Docker.
+This project is a Python-based Telegram bot designed for smooth deployment and scaling with Docker.
+
+And provides channel and group management services.
+
+In the near future, its functionality will be able to cover at least 80% of the most diverse, imaginable and unimaginable tasks that only come to our users' minds.
+
+You can become a part of our community today, create a fork and develop the project with us!
 
 ## Features
 
@@ -18,8 +24,7 @@ This project is a Python-based Telegram bot designed for seamless deployment and
 
 1. **Clone the Repository**:
     ```bash
-    git clone https://oauth2:<pk>@github.com/TehQueen/abcdefg.git
-    cd abcdefg
+    git clone https://github.com/TehQueen/abcdefg.git
     ```
 
 2. **Set Up Environment Variables**:
@@ -30,6 +35,7 @@ This project is a Python-based Telegram bot designed for seamless deployment and
     POSTGRES_HOST=your_database_host
     POSTGRES_USER=your_database_user
     POSTGRES_PASSWORD=your_database_password
+    LOG_DDIR=your_log_directory
     ```
 
 3. **Build and Run the Docker Containers**:
