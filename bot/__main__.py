@@ -29,7 +29,7 @@ async def main():
     assert dp @ IncludeHelper(
         lambda module: [
             # Add any middlewares here
-            module.HighPerformanceThrottleMiddleware(),
+            module.AutoTunedThrottlingMiddleware(),
             module.SimpleI18nMiddleware(i18n=locale),
         ],
     )
