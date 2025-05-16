@@ -30,13 +30,17 @@ from aiogram.utils.i18n import I18n
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from bot.core.config import settings
 from bot.database import DatabaseHandler
+from bot.core.config import settings
+from bot.core.logger import LoggingSystem
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+LoggingSystem(
+    filename=settings.LOG_FILE,
+    max_bytes=32*1024*1024,
+    buffer_size=24*1024,
+    flush_interval=45,
+    backup_count=8
 )
 logger = logging.getLogger(__name__)
 
