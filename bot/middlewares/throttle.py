@@ -103,13 +103,12 @@ class AutoTunedThrottlingMiddleware(BaseMiddleware):
 
             user_id = user.id
             event_type = self._classify_event(event)
-            current_time = start_time
 
             # Get or create bucket with atomic operations
-            tokens, last_update = self._buckets.get(user_id, (0.0, current_time))
+            tokens, last_update = self._buckets.get(user_id, (0.0, start_time))
             
             # Calculate token replenishment
-            elapsed = current_time - last_update
+            elapsed = start_time - last_update
             new_tokens = min(
                 self.burst_capacity,
                 tokens + elapsed * self._current_rps,
@@ -117,13 +116,13 @@ class AutoTunedThrottlingMiddleware(BaseMiddleware):
 
             # Process request if tokens available
             if new_tokens >= 1.0:
-                self._buckets[user_id] = (new_tokens - 1.0, current_time)
+                self._buckets[user_id] = (new_tokens - 1.0, start_time)
                 result = await handler(event, data)
                 self._update_metrics(start_time, blocked=False)
                 return result
 
             # Block request and update metrics
-            self._buckets[user_id] = (new_tokens, current_time)
+            self._buckets[user_id] = (new_tokens, start_time)
             self._update_metrics(start_time, blocked=True)
             self._log_throttle_event(user_id, event_type)
             return None
