@@ -6,5 +6,14 @@ Exports:
     router (object): The router instance for handling personal messages.
 """
 from bot.handlers.personal.message import router
+from bot.middlewares import IncludeHelper
+
+
+assert router @ IncludeHelper(
+    lambda module: [
+        # Add any middlewares here
+        module.AuthorizationMiddleware(),
+    ],
+)
 
 __all__ = ["router"]
