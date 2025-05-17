@@ -20,6 +20,7 @@ from aiogram import BaseMiddleware, Router
 from aiogram.utils.i18n import SimpleI18nMiddleware
 
 from bot.middlewares.throttle import AutoTunedThrottlingMiddleware
+from bot.middlewares.authoriz import AuthorizationMiddleware
 
 
 class IncludeMeta(Protocol):
@@ -27,6 +28,8 @@ class IncludeMeta(Protocol):
     Meta class to define the structure of inner middlewares for the current module.
     """
     class AutoTunedThrottlingMiddleware(AutoTunedThrottlingMiddleware):
+        ...
+    class AuthorizationMiddleware(AuthorizationMiddleware):
         ...
     class SimpleI18nMiddleware(SimpleI18nMiddleware):
         ...
@@ -103,6 +106,7 @@ class IncludeHelper:
 
 __all__ = [
     "AutoTunedThrottlingMiddleware",
+    "AuthorizationMiddleware",
     "SimpleI18nMiddleware",
     "IncludeHelper",
 ]
