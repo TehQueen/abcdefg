@@ -105,7 +105,10 @@ class AutoTunedThrottlingMiddleware(BaseMiddleware):
             event_type = self._classify_event(event)
 
             # Get or create bucket with atomic operations
-            tokens, last_update = self._buckets.get(user_id, (0.0, start_time))
+            tokens, last_update = self._buckets.get(
+                user_id,
+                (self.burst_capacity, start_time)
+            )
             
             # Calculate token replenishment
             elapsed = start_time - last_update
@@ -137,8 +140,10 @@ class AutoTunedThrottlingMiddleware(BaseMiddleware):
 
     def _classify_event(self, event: TelegramObject) -> str:
         """Classify events for future differential throttling support."""
+        if isinstance(event, CallbackQuery):
+            return "callback"
         if isinstance(event, Message):
-            return event.text.startswith('/') and "command" or "message"
+            return "command" if (t := event.text) and t.startswith('/') else "command"
         return isinstance(event, CallbackQuery) and "callback" or "other"
 
     def _update_metrics(self, start_time: float, blocked: bool) -> None:
