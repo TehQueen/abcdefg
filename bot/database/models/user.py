@@ -12,8 +12,7 @@ class User(BaseModel):
     Attributes:
         id (int): The unique identifier for the user. Primary key.
         username (str): The username of the user.
-        first_name (str): The first name of the user.
-        last_name (str): The last name of the user.
+        full_name (str): The full name name of the user.
         language_code (str): The language code representing the user's preferred language.
         sub_end_date (datetime): The subscription end date for the user.
     """
