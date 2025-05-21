@@ -24,7 +24,7 @@ async def check_if_auth(session: AsyncSession, uid: int) -> Optional[User]:
         await session.execute(select(User).where(User.id == uid))
     ).scalars().first()
 
-@db_handler
+@db_handler(expire_on_commit=False)
 async def add_user(session: AsyncSession, user: User) -> User:
     """Asynchronously adds a new user to the database.
 
@@ -37,4 +37,5 @@ async def add_user(session: AsyncSession, user: User) -> User:
     """
     session.add(user)
     await session.commit()
+    await session.refresh(user)
     return user
