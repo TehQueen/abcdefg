@@ -66,8 +66,8 @@ class LazyKeyboard:
         Returns:
             KeyboardType: Ready-made keyboard
         """
-        (locale := i18n.current_locale) in i18n.locales \
-            and locale or (locale := i18n.default_locale)
+        (locale := i18n.current_locale) not in i18n.locales \
+            and (locale := i18n.default_locale)
         now = monotonic()
 
         if locale not in self._cached_locale or self._is_cache_expired(locale, now):
