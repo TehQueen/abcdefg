@@ -14,7 +14,8 @@ Exports:
 import sys
 import logging
 
-from typing import Protocol
+from itertools import product
+from typing import Protocol, TypeVar, overload, runtime_checkable
 
 from aiogram import BaseMiddleware, Router
 from aiogram.utils.i18n import SimpleI18nMiddleware
@@ -23,6 +24,9 @@ from bot.middlewares.throttle import AutoTunedThrottlingMiddleware
 from bot.middlewares.authoriz import AuthorizationMiddleware
 
 
+AnyRouter = TypeVar("AnyRouter", Router, list[Router])
+
+@runtime_checkable
 class IncludeMeta(Protocol):
     """
     Meta class to define the structure of inner middlewares for the current module.
@@ -34,7 +38,7 @@ class IncludeMeta(Protocol):
     class SimpleI18nMiddleware(SimpleI18nMiddleware):
         ...
 
-
+@runtime_checkable
 class MiddlewareFactory(Protocol):
     """
     MiddlewareFactory is a protocol that defines a callable interface for creating
@@ -49,6 +53,7 @@ class MiddlewareFactory(Protocol):
     """
     def __call__(self, module: IncludeMeta) -> list[BaseMiddleware]:
         ...
+
 
 class IncludeHelper:
     def __init__(self, factory: MiddlewareFactory,
@@ -66,7 +71,15 @@ class IncludeHelper:
         self.factory = factory
         self.outer_middleware = outer_middleware
 
+    @overload
     def __rmatmul__(self, router: Router) -> bool:
+        ...
+    
+    @overload
+    def __rmatmul__(self, routers: list[Router]) -> bool:
+        ...
+
+    def __rmatmul__(self, batch: AnyRouter) -> bool:
         """
         Implements the reverse matrix multiplication operator (`@`) for registering middlewares
         to a router.
@@ -75,7 +88,7 @@ class IncludeHelper:
         provided by the `self.factory` method to the appropriate middleware target in the router.
 
         Args:
-            router (Router): The router instance to which the middlewares will be registered.
+            batch (AnyRouter): The router instance('s) to which the middlewares will be registered.
 
         Returns:
             bool: True if all middlewares were successfully registered, False otherwise.
@@ -90,10 +103,12 @@ class IncludeHelper:
         Exceptions:
             - Logs a warning if an error occurs during middleware registration and returns False.
         """
+        not isinstance(batch, list) and (batch := (batch,))
+
         try:
             module: IncludeMeta = sys.modules[__name__]
 
-            for middleware in self.factory(module):
+            for router, middleware in product(batch, self.factory(module)):
                 target_middleware = self.outer_middleware and \
                     router.message.outer_middleware or router.message.middleware
                 target_middleware.register(middleware)
