@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-05-12 23:34+0300\n"
-"PO-Revision-Date: 2025-05-12 23:34+0300\n"
+"POT-Creation-Date: 2025-05-18 02:56+0300\n"
+"PO-Revision-Date: 2025-05-21 22:42+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
 "Language-Team: en <LL@li.org>\n"
@@ -18,7 +18,58 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
 
-#: bot/handlers/personal/message.py:13
-msgid "Hello, {name}!"
+#: bot/handlers/personal/keyboards.py:10
+msgid "⚙️"
+msgstr "Smart Automation"
+
+#: bot/handlers/personal/keyboards.py:11
+msgid "📢"
+msgstr "Audience Hub"
+
+#: bot/handlers/personal/keyboards.py:13
+msgid "📈"
+msgstr "Analytics"
+
+#: bot/handlers/personal/message.py:18
+msgid "cmd-start"
 msgstr ""
+"🚀 Hello, {name}! I am your digital assistant for Telegram communities.\n"
+"\n"
+"With my help, you can:\n"
+"🔹 Automate routine (moderation, greetings, templates)\n"
+"🔹 Simplify communication (surveys, newsletters, chatbots)\n"
+"🔹 Monitor activity (analytics, notifications, reports)\n"
+"\n"
+"Select a section:"
+
+#: bot/handlers/personal/message.py:24
+msgid "cmd-help"
+msgstr ""
+"🌟 Need assistance? Here’s how I can help!\n"
+"\n"
+"📌 Key Features:\n"
+"⚙️ Automate Tasks: Set up auto-replies, moderation rules, or scheduled "
+"posts.\n"
+"📢 Audience Tools: Create polls, send broadcasts, or manage interactions.\n"
+"📈 Get Reports: Track engagement, member growth, and content performance.\n"
+"\n"
+"🔧 Basic Commands:\n"
+"\n"
+"/start – Restart the bot or return to the main menu.\n"
+"\n"
+"/schedule – Plan posts in advance (e.g., /schedule 25.12.2024 15:00).\n"
+"\n"
+"/settings – Adjust automation rules or notification preferences.\n"
+"\n"
+"💡 Tips:\n"
+"• Use buttons or quick replies to navigate faster.\n"
+"• Need examples? Type /example [command] (e.g., /example schedule).\n"
+"\n"
+"🛠️ Stuck? Contact support: @YourSupportHandle | Visit Help Center.\n"
+"\n"
+"Reply with a command or tap a button below!"
+
+#: bot/handlers/personal/message.py:28
+msgid "cmd_settings"
+msgstr "Soon..."
 
