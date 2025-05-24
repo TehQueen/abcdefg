@@ -5,7 +5,7 @@ and makes it available as part of the public API of this package.
 Exports:
     router (object): The router instance for handling personal messages.
 """
-from bot.handlers.personal.message import router
+from bot.handlers.personal.messages import router
 from bot.middlewares import IncludeHelper
 
 
