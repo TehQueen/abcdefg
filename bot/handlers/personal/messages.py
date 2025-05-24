@@ -1,15 +1,20 @@
 from aiogram import Router
-from aiogram.filters import Command, CommandStart, CommandObject
+from aiogram.filters import CommandStart
 from aiogram.types import Message
-from aiogram.utils.i18n import gettext as _
+from aiogram.utils.i18n import I18n, gettext as _
 
 from typing import Any
+
+from bot.database.models import User
+from bot.handlers.personal.keyboards import cmd_start_kb
 
 
 router = Router(name=__name__) 
 
 @router.message(CommandStart())
-async def cmd_start(message: Message, command: CommandObject) -> Any:
-    await message.answer(_("Hello, {name}!").format(
-        name=message.from_user.full_name
-    ))
+async def cmd_start(
+    message: Message, user: User, i18n: I18n
+) -> Any:
+    await message.answer(_("cmd-start").format(
+        name=user.full_name
+    ), reply_markup=cmd_start_kb(i18n))
