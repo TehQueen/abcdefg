@@ -163,8 +163,7 @@ class IncludeHelper:
     ) -> None:
         observer: TelegramEventObserver = getattr(router, et.observer_attr)
 
-        mw_pool = self.outer_middleware and \
-            observer.outer_middleware or observer.middleware
+        mw_pool = observer.outer_middleware if self.outer_middleware else observer.middleware
 
         mw_pool.register(mw)
 
