@@ -14,17 +14,37 @@ Exports:
 import sys
 import logging
 
-from itertools import product
-from typing import Protocol, TypeVar, overload, runtime_checkable
+from enum import IntFlag, unique
+from typing import Protocol, Tuple, TypeVar, Optional, List, Self, overload, runtime_checkable
 
 from aiogram import BaseMiddleware, Router
 from aiogram.utils.i18n import SimpleI18nMiddleware
+from aiogram.dispatcher.event.telegram import TelegramEventObserver
 
 from bot.middlewares.throttle import AutoTunedThrottlingMiddleware
 from bot.middlewares.authoriz import AuthorizationMiddleware
 
 
-AnyRouter = TypeVar("AnyRouter", Router, list[Router])
+AnyRouter = TypeVar("AnyRouter", Router, List[Router])
+MiddlewareItem = TypeVar("MiddlewareItem", BaseMiddleware, Tuple[BaseMiddleware])
+
+@unique
+class EventObserverType(IntFlag):
+    MESSAGES = 1
+    CALLBACKS = 2
+
+    @property
+    def observer_attr(self) -> str:
+        mapping = {
+            EventObserverType.MESSAGES: "message",
+            EventObserverType.CALLBACKS: "callback_query",
+        }
+        return mapping[self]
+    
+    @classmethod
+    def all_flags(cls) -> List[Self]:
+        return [flag for flag in cls]
+
 
 @runtime_checkable
 class IncludeMeta(Protocol):
@@ -37,6 +57,7 @@ class IncludeMeta(Protocol):
         ...
     class SimpleI18nMiddleware(SimpleI18nMiddleware):
         ...
+
 
 @runtime_checkable
 class MiddlewareFactory(Protocol):
@@ -51,7 +72,12 @@ class MiddlewareFactory(Protocol):
             A callable method that takes a module of type `IncludeMeta` and returns
             a list of middleware instances.
     """
-    def __call__(self, module: IncludeMeta) -> list[BaseMiddleware]:
+    def __call__(
+        self,
+        module: IncludeMeta,
+        *,
+        types: Optional[EventObserverType]
+    ) -> List[MiddlewareItem]:
         ...
 
 
@@ -76,7 +102,7 @@ class IncludeHelper:
         ...
     
     @overload
-    def __rmatmul__(self, routers: list[Router]) -> bool:
+    def __rmatmul__(self, routers: List[Router]) -> bool:
         ...
 
     def __rmatmul__(self, batch: AnyRouter) -> bool:
@@ -103,20 +129,46 @@ class IncludeHelper:
         Exceptions:
             - Logs a warning if an error occurs during middleware registration and returns False.
         """
-        not isinstance(batch, list) and (batch := (batch,))
+        not isinstance(batch, List) and (batch := (batch,))
 
         try:
             module: IncludeMeta = sys.modules[__name__]
 
-            for router, middleware in product(batch, self.factory(module)):
-                target_middleware = self.outer_middleware and \
-                    router.message.outer_middleware or router.message.middleware
-                target_middleware.register(middleware)
-                self.logger.info(f"Registered middleware: {middleware}")
+            items = ((_ := self.factory).__code__.co_argcount > 1) and \
+                _(module, EventObserverType) or _(module)
+
+            for router in batch:
+                for item in items:
+                    if isinstance(item, Tuple):
+                        mw, et = item
+                        list(map(
+                            lambda flag: self._register_mw(router, flag, mw),
+                            filter(lambda flag: et & flag, EventObserverType.all_flags())
+                        ))
+                    else:
+                        list(map(
+                            lambda flag: self._register_mw(router, flag, item),
+                            EventObserverType.all_flags()
+                        ))
             return True
         except Exception as e:
-            self.logger.warning(f"Error while registering middlewares: {e}")
+            self.logger.warning(f"Error while registering middlewares: {e}", exc_info=True)
             return False
+        
+    def _register_mw(
+        self,
+        router: Router,
+        et: EventObserverType,
+        mw: BaseMiddleware
+    ) -> None:
+        observer: TelegramEventObserver = getattr(router, et.observer_attr)
+
+        mw_pool = self.outer_middleware and \
+            observer.outer_middleware or observer.middleware
+
+        mw_pool.register(mw)
+
+        self.logger.info(f"Registered middleware: {mw}")
 
 
 __all__ = [
