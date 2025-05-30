@@ -31,7 +31,7 @@ msgstr "Группы"
 msgid "⚙️"
 msgstr "Панель Управления"
 
-#: bot/handlers/personal/messages.py:18
+#: bot/handlers/personal/messages.py:21
 msgid "cmd-start"
 msgstr ""
 "Привет, <b>{name}</b>! Я ваш цифровой помощник в экосистеме Telegram.\n"
@@ -43,4 +43,18 @@ msgstr ""
 "через бота.</blockquote>\n"
 "\n"
 "Чтобы продолжить - введите команду или выберите пункт ниже:"
+
+#: bot/handlers/personal/messages.py:27
+msgid "my-channels"
+msgstr ""
+"Ваши связанные каналы:\n"
+"\n"
+"(У вас нет связанных каналов)"
+
+#: bot/handlers/personal/messages.py:31
+msgid "my-groups"
+msgstr ""
+"Ваши связанные группы:\n"
+"\n"
+"(У вас нет связанных групп)"
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-05-30 21:14+0300\n"
-"PO-Revision-Date: 2025-05-30 21:15+0300\n"
+"POT-Creation-Date: 2025-05-30 22:25+0300\n"
+"PO-Revision-Date: 2025-05-30 22:29+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
 "Language-Team: en <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr "Groups"
 msgid "⚙️"
 msgstr "Dashboard"
 
-#: bot/handlers/personal/messages.py:18
+#: bot/handlers/personal/messages.py:21
 msgid "cmd-start"
 msgstr ""
 "Hello <b>{name}</b>! I am your digital assistant in the Telegram "
@@ -44,4 +44,18 @@ msgstr ""
 " through the bot.</blockquote>\n"
 "\n"
 "To continue - enter the command or select the item below:"
+
+#: bot/handlers/personal/messages.py:27
+msgid "my-channels"
+msgstr ""
+"Your associated channels:\n"
+"\n"
+"(You have no associated channels)"
+
+#: bot/handlers/personal/messages.py:31
+msgid "my-groups"
+msgstr ""
+"Your associated groups:\n"
+"\n"
+"(You have no associated groups)"
 
