@@ -7,6 +7,7 @@ Classes:
       bot configuration, localization, scheduler, and database connection.
 Attributes:
     - BOT_TOKEN (str): The bot token for authentication.
+    - WEBAPP_EP (str): A web application associated with a bot.
     - LOG_DIR (str): Path to the directory containing log files.
     - LOG_FILE (str): Current log file name.
     - LOCALE_DIR (str): Path to the directory containing localization files.
@@ -34,6 +35,9 @@ class Settings(BaseSettings):
 
     # Bot configuration
     BOT_TOKEN: str
+
+    # WebApp configuration
+    WEBAPP_EP: str
 
     # Logging configuration
     LOG_DIR: str = "/var/log/tb"
