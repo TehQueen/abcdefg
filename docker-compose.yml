@@ -1,12 +1,12 @@
-
 services:
-  postgres:
+  database:
     image: postgres:17.4-alpine
     container_name: pg-db
     volumes:
-      - pg_db:/var/lib/postgresql/data
+      - pg_db:/var/lib/postgresql/data:rw
+      - /tmp/postgres-tmp:/tmp:tmpfs
     networks:
-      - rloc_net
+      - backend-network
     ports:
       - "5432:5432"
     deploy:
@@ -15,7 +15,7 @@ services:
           cpus: '0.5'
           memory: 512M
         reservations:
-          cpus: '0.5'
+          cpus: '0.25'
           memory: 256M
     command: >
       postgres  -c max_connections=1000
@@ -26,8 +26,11 @@ services:
                 -c wal_buffers=16MB
                 -c default_statistics_target=100
     restart: unless-stopped
-    tty: true
-    stdin_open: true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -37,12 +40,15 @@ services:
       - .env
 
   telegram-bot:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: tg-bot
     volumes:
-      - static:/var/abcdefg/static
+      - app-logs:${LOG_DDIR:-/var/log/tb}
+      - static-volume:/app/static:ro
     networks:
-      - rloc_net
+      - backend-network
     deploy:
       resources:
         limits:
@@ -53,19 +59,30 @@ services:
           memory: 256M
     restart: unless-stopped
     depends_on:
-      - postgres
+      database:
+        condition: service_healthy
     environment:
       BOT_TOKEN: ${BOT_TOKEN}
-      PG_HOST: ${POSTGRES_HOST}
-      PG_USER: ${POSTGRES_USER}
-      PG_PASS: ${POSTGRES_PASSWORD}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_USER: ${POSTGRES_USER}
+      DB_PSWD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      LOG_DIR: ${LOG_DDIR:-/var/log/tb}
     env_file:
       - .env
 
 volumes:
+  app-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${LOG_SDIR:-./logs}
+  static-volume:
+    driver: local
   pg_db:
-  static:
 
 networks:
-  rloc_net:
-  
+  backend-network:
+    driver: bridge
+    attachable: true

@@ -1,0 +1,61 @@
+# English translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-05-30 22:25+0300\n"
+"PO-Revision-Date: 2025-05-30 22:29+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.13.1\n"
+
+#: bot/handlers/personal/keyboards.py:19
+msgid "📢"
+msgstr "Channels"
+
+#: bot/handlers/personal/keyboards.py:20
+msgid "🧙‍♂️"
+msgstr "Groups"
+
+#: bot/handlers/personal/keyboards.py:22 bot/handlers/personal/keyboards.py:29
+msgid "⚙️"
+msgstr "Dashboard"
+
+#: bot/handlers/personal/messages.py:21
+msgid "cmd-start"
+msgstr ""
+"Hello <b>{name}</b>! I am your digital assistant in the Telegram "
+"ecosystem.\n"
+"If you need help managing channels or running groups - you have come to "
+"the right place!\n"
+"\n"
+"<blockquote>Following new trends, we have decided to move to a <a "
+"href='/app'>mini-application</a>.\n"
+"But in order not to upset anyone - we left the ability to manage directly"
+" through the bot.</blockquote>\n"
+"\n"
+"To continue - enter the command or select the item below:"
+
+#: bot/handlers/personal/messages.py:27
+msgid "my-channels"
+msgstr ""
+"Your associated channels:\n"
+"\n"
+"(You have no associated channels)"
+
+#: bot/handlers/personal/messages.py:31
+msgid "my-groups"
+msgstr ""
+"Your associated groups:\n"
+"\n"
+"(You have no associated groups)"
+
